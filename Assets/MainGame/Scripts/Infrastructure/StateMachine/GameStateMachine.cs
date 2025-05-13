@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
-using MainGame.Scripts.Infrastructure.StateMachine.Services;
+using MainGame.Scripts.Infrastructure.StateMachine.States.StateInterfaces;
 
 namespace MainGame.Scripts.Infrastructure.StateMachine
 {
-    public class GameStateMachine
+    public class GameStateMachine : IGameStateMachine
     {
         private readonly Dictionary<Type, IExitable> _states;
         private IExitable _currentState;
 
-        public GameStateMachine(ICoroutineRunner coroutineRunner)
+        public GameStateMachine()
         {
-            _states = new Dictionary<Type, IExitable>()
-            {
-                [typeof(BootstrapState)] = new BootstrapState(this, coroutineRunner),
-                [typeof(GameLoopState)] = new GameLoopState(this),
-            };
+            _states = new Dictionary<Type, IExitable>();
+        }
+
+        public void AddState<TState>(TState state) where TState : class, IExitable
+        {
+            _states[typeof(TState)] = state;
         }
 
         public void Enter<TState>() where TState : class, IState
