@@ -1,3 +1,4 @@
+using MainGame.Scripts.Infrastructure.Services;
 using UnityEngine;
 using Zenject;
 using MainGame.Scripts.Infrastructure.Services.Factories;
@@ -8,17 +9,29 @@ namespace MainGame.Scripts.GameLogic
     {
         private IShapeFactory _shapeFactory;
         private IShapeResourceLoader _shapeResourceLoader;
-
-        private void Awake()
+        private IInputClickHandlerService _inputClickHandlerService;
+        
+        private void OnEnable()
         {
-           _shapeFactory.Spawn(_shapeResourceLoader.GetRandomShapeKey());
+            _inputClickHandlerService.ClickPressed += Spawn;
+        }
+        
+        private void OnDisable()
+        {
+            _inputClickHandlerService.ClickPressed -= Spawn;
+        }
+
+        private void Spawn(Vector2 obj)
+        {
+            _shapeFactory.Spawn(_shapeResourceLoader.GetRandomShapeKey());
         }
 
         [Inject]
-        private void Construct(IShapeFactory shapeFactory, IShapeResourceLoader shapeResourceLoader)
+        private void Construct(IShapeFactory shapeFactory, IShapeResourceLoader shapeResourceLoader, IInputClickHandlerService inputClickHandlerService)
         {
             _shapeFactory = shapeFactory;
             _shapeResourceLoader = shapeResourceLoader;
+            _inputClickHandlerService = inputClickHandlerService;
         }
     }
 }

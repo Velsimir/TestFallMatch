@@ -13,7 +13,6 @@ namespace MainGame.Scripts.Infrastructure.Installers
     {
         [SerializeField] CoroutineRunnerService _coroutineRunnerServicePrefab;
         [SerializeField] Curtain _curtain;
-        [SerializeField] Shape _shapePrefab;
         
         override public void InstallBindings()
         {
@@ -21,7 +20,6 @@ namespace MainGame.Scripts.Infrastructure.Installers
             Container.Bind<ISceneLoaderService>().To<SceneLoaderService>().AsSingle();
             Container.Bind<IShapeResourceLoader>().To<ShapeResourcesLoader>().AsSingle();
             Container.Bind<IShapeFactory>().To<ShapeFactory>().AsSingle();
-            Container.Bind<ISpawnerService<Shape>>().To<SpawnerService<Shape>>().AsSingle().WithArguments(_shapePrefab);
             Container.Bind<IInputClickHandlerService>().To<InputClickHandler>().AsSingle();
             
             Container.Bind<ICoroutineRunnerService>().FromComponentInNewPrefab(_coroutineRunnerServicePrefab).AsSingle();

@@ -49,7 +49,7 @@ namespace MainGame.Scripts.Infrastructure.Services.Factories
                         
                         ShapeKey key = new ShapeKey(shapeVariableName, colorName, animalName);
                         
-                        _shapeResources[key] = new ShapeResource(shapeVariable.BorderImage, shapeVariable.FillImage, color, animal);
+                        _shapeResources[key] = new ShapeResource(shapeVariable.Shape, shapeVariable.BorderImage, shapeVariable.FillImage, color, animal);
                     }
                 }
             }
