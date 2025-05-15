@@ -14,7 +14,6 @@ namespace MainGame.Scripts
         private void Awake()
         {
             _waitBetweenSteps = new WaitForSeconds(_timeFadeStep);
-            DontDestroyOnLoad(this);
         }
 
         public void Show()

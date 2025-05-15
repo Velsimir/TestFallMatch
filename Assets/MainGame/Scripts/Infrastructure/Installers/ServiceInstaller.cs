@@ -22,6 +22,7 @@ namespace MainGame.Scripts.Infrastructure.Installers
             Container.Bind<IShapeResourceLoader>().To<ShapeResourcesLoader>().AsSingle();
             Container.Bind<IShapeFactory>().To<ShapeFactory>().AsSingle();
             Container.Bind<ISpawnerService<Shape>>().To<SpawnerService<Shape>>().AsSingle().WithArguments(_shapePrefab);
+            Container.Bind<IInputClickHandlerService>().To<InputClickHandler>().AsSingle();
             
             Container.Bind<ICoroutineRunnerService>().FromComponentInNewPrefab(_coroutineRunnerServicePrefab).AsSingle();
             Container.Bind<Curtain>().FromComponentInNewPrefab(_curtain).AsSingle();

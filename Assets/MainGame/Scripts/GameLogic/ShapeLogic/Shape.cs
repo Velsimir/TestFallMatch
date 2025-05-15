@@ -14,11 +14,12 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
         [SerializeField] private SpriteRenderer _fillSprite;
         [SerializeField] private SpriteRenderer _animalSprite;
         [SerializeField] private SpriteRenderer _colorMaterial;
-        [SerializeField] private PolygonCollider2D _polygonCollider;
-        
+        [SerializeField] private ColliderUpdater _borderColliderUpdater;
+        [SerializeField] private ColliderUpdater _fillColliderUpdater;
         public event Action<ISpawnable> Disappeared;
+        public static event Action<Shape> ShapeDisappeared;
 
-        public ShapeKey ShapeKey;
+        public ShapeKey ShapeKey { get; private set; }
 
         public void Initialize(Sprite shapeBorder, Sprite fillSprite, Sprite animalImage, Material colorMaterial, ShapeKey shapeKey)
         {
@@ -29,26 +30,16 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
             _fillSprite.color = colorMaterial.color;
 
             ShapeKey = shapeKey;
-
-            UpdateCollider();
+            
+            _borderColliderUpdater.UpdateCollider();
+            _fillColliderUpdater.UpdateCollider();
         }
 
         public void Disappear()
         {
+            ShapeDisappeared?.Invoke(this);
+            Debug.Log($"{ShapeKey.ShapeVariable} - {ShapeKey.Color} - {ShapeKey.Animal}");
             Disappeared?.Invoke(this);
-        }
-
-        private void UpdateCollider()
-        {
-            var sprite = _shapeBorder.sprite;
-            _polygonCollider.pathCount = sprite.GetPhysicsShapeCount();
-
-            var path = new List<Vector2>();
-            for (int i = 0; i < _polygonCollider.pathCount; i++)
-            {
-                sprite.GetPhysicsShape(i, path);
-                _polygonCollider.SetPath(i, path.ToArray());
-            }
         }
     }
 }
