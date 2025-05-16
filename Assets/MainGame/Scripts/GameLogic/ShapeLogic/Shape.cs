@@ -5,8 +5,7 @@ using UnityEngine;
 namespace MainGame.Scripts.GameLogic.ShapeLogic
 {
     [RequireComponent(typeof(SpriteRenderer), 
-        typeof(Rigidbody2D), 
-        typeof(PolygonCollider2D))]
+        typeof(Rigidbody2D))]
     public class Shape : MonoBehaviour, ISpawnable
     {
         [SerializeField] private SpriteRenderer _shapeBorder;
@@ -20,6 +19,7 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
 
         public void Initialize(Sprite animalImage, Material colorMaterial, ShapeKey shapeKey)
         {
+            transform.Rotate(Vector3.zero);
             _animalSprite.sprite = animalImage;
             _colorMaterial.color = colorMaterial.color;
             _fillSprite.color = colorMaterial.color;
@@ -30,7 +30,6 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
         public void Disappear()
         {
             ShapeDisappeared?.Invoke(this);
-            Debug.Log($"{ShapeKey.ShapeVariable} - {ShapeKey.Color} - {ShapeKey.Animal}");
             gameObject.SetActive(false);
             Disappeared?.Invoke(this);
         }

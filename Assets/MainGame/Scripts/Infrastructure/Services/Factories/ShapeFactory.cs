@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MainGame.Scripts.GameLogic.ShapeLogic;
 using MainGame.Scripts.Infrastructure.Services.ObjectSpawner;
+using UnityEngine;
 
 namespace MainGame.Scripts.Infrastructure.Services.Factories
 {
@@ -15,7 +16,7 @@ namespace MainGame.Scripts.Infrastructure.Services.Factories
             _shapeResourcesLoader = shapeResourcesLoader;
         }
 
-        public Shape Spawn(ShapeKey shapeKey)
+        public Shape Spawn(ShapeKey shapeKey, Transform at)
         {
             Shape shape;
             _shapeResourcesLoader.TryGetResources(shapeKey, out ShapeResource shapeResource);
@@ -23,11 +24,11 @@ namespace MainGame.Scripts.Infrastructure.Services.Factories
             if (_shapeSpawners.ContainsKey(shapeResource.Shape) == false)
             {
                 _shapeSpawners[shapeResource.Shape] = new SpawnerService<Shape>(shapeResource.Shape);
-                shape =  _shapeSpawners[shapeResource.Shape].Spawn();
+                shape =  _shapeSpawners[shapeResource.Shape].Spawn(at);
             }
             else
             {
-                shape  = _shapeSpawners[shapeResource.Shape].Spawn();
+                shape  = _shapeSpawners[shapeResource.Shape].Spawn(at);
             }
             
             shape.Initialize(shapeResource.AnimalImage, shapeResource.ColorMaterial, shapeKey);
