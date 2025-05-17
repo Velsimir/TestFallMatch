@@ -16,11 +16,12 @@ namespace MainGame.Scripts.Infrastructure.Installers
         
         override public void InstallBindings()
         {
+            Container.Bind<IInputClickHandlerService>().To<InputClickHandler>().AsSingle();
             Container.Bind<IGameStateMachine>().To<GameStateMachine>().AsSingle();
             Container.Bind<ISceneLoaderService>().To<SceneLoaderService>().AsSingle();
             Container.Bind<IShapeResourceLoader>().To<ShapeResourcesLoader>().AsSingle();
             Container.Bind<IShapeFactory>().To<ShapeFactory>().AsSingle();
-            Container.Bind<IInputClickHandlerService>().To<InputClickHandler>().AsSingle();
+            Container.Bind<IRestartRegistryService>().To<RestartRegistryService>().AsSingle();
             
             Container.Bind<ICoroutineRunnerService>().FromComponentInNewPrefab(_coroutineRunnerServicePrefab).AsSingle();
             Container.Bind<Curtain>().FromComponentInNewPrefab(_curtain).AsSingle();

@@ -40,7 +40,7 @@ namespace MainGame.Scripts.GameLogic
             if (hit.collider != null)
             {
                 Shape shape =  hit.collider.GetComponentInParent<Shape>();
-                shape.Disappear();
+                shape.Interact();
             }
         }
     }

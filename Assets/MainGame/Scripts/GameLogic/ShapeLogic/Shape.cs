@@ -12,24 +12,47 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
         [SerializeField] private SpriteRenderer _fillSprite;
         [SerializeField] private SpriteRenderer _animalSprite;
         [SerializeField] private SpriteRenderer _colorMaterial;
+        [SerializeField] private Rigidbody2D _rigidbody2D;
+        
+        private Quaternion _defaultRotation;
+        
         public event Action<ISpawnable> Disappeared;
-        public static event Action<Shape> ShapeDisappeared;
+        public static event Action<Shape> SentToBar;
 
         public ShapeKey ShapeKey { get; private set; }
 
+        private void Awake()
+        {
+            _defaultRotation = transform.rotation;
+        }
+
         public void Initialize(Sprite animalImage, Material colorMaterial, ShapeKey shapeKey)
         {
-            transform.Rotate(Vector3.zero);
+            _rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
+            
             _animalSprite.sprite = animalImage;
             _colorMaterial.color = colorMaterial.color;
             _fillSprite.color = colorMaterial.color;
 
+            transform.rotation =  _defaultRotation;
+            
             ShapeKey = shapeKey;
+        }
+
+        public void Interact()
+        {
+            SentToBar?.Invoke(this);
+        }
+
+        public void SetInBar(Transform position)
+        {
+            transform.position = position.position;
+            transform.rotation = _defaultRotation;
+            _rigidbody2D.bodyType = RigidbodyType2D.Static;
         }
 
         public void Disappear()
         {
-            ShapeDisappeared?.Invoke(this);
             gameObject.SetActive(false);
             Disappeared?.Invoke(this);
         }

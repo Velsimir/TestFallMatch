@@ -1,5 +1,7 @@
+using MainGame.Scripts.Infrastructure.Installers;
 using MainGame.Scripts.Infrastructure.Services.SceneLoader;
 using MainGame.Scripts.Infrastructure.StateMachine.States.StateInterfaces;
+using UnityEngine;
 
 namespace MainGame.Scripts.Infrastructure.StateMachine.States
 {

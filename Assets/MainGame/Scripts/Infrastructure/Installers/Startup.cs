@@ -10,7 +10,7 @@ namespace MainGame.Scripts.Infrastructure.Installers
         private readonly BootstrapState _bootstrapState;
         private readonly GameLoopState _gameLoopState;
 
-        public Startup(IGameStateMachine stateMachine, BootstrapState bootstrapState, GameLoopState gameLoopState)
+        public Startup(IGameStateMachine stateMachine, BootstrapState bootstrapState,GameLoopState gameLoopState)
         {
             _stateMachine = stateMachine;
             _bootstrapState = bootstrapState;
