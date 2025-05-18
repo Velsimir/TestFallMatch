@@ -4,9 +4,9 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
 {
     public struct ShapeKey : IEquatable<ShapeKey>
     {
-        public string ShapeVariable { get; }
-        public string Color { get; }
-        public string Animal { get; }
+        private string ShapeVariable { get; }
+        private string Color { get; }
+        private string Animal { get; }
 
         public ShapeKey(string shapeVariable, string color, string animal)
         {
@@ -22,8 +22,8 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
 
         public bool Equals(ShapeKey other)
         {
-            return ShapeVariable == other.ShapeVariable 
-                   && Color == other.Color 
+            return ShapeVariable == other.ShapeVariable
+                   && Color == other.Color
                    && Animal == other.Animal;
         }
 
@@ -31,7 +31,7 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
         {
             return obj is ShapeKey other && Equals(other);
         }
-        
+
         public override string ToString()
         {
             return $"{ShapeVariable}_{Color}_{Animal}";

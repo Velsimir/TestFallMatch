@@ -12,7 +12,7 @@ namespace MainGame.Scripts.Infrastructure.Services
             {
                 return;
             }
-            
+
             _restartableObjects.Add(restartable);
         }
 
@@ -22,7 +22,7 @@ namespace MainGame.Scripts.Infrastructure.Services
             {
                 return;
             }
-            
+
             _restartableObjects.Remove(restartable);
         }
 
@@ -33,10 +33,5 @@ namespace MainGame.Scripts.Infrastructure.Services
                 restartable.Restart();
             }
         }
-    }
-
-    public interface IRestartable
-    {
-        public void Restart();
     }
 }

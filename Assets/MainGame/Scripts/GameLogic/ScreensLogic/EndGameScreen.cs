@@ -1,3 +1,4 @@
+using MainGame.Scripts.GameLogic.CupLogic;
 using MainGame.Scripts.GameLogic.ShapeBorderLogic;
 using MainGame.Scripts.Infrastructure.Services;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace MainGame.Scripts.GameLogic
         [SerializeField] private GameObject _winScreen;
         [SerializeField] private GameObject _background;
         [SerializeField] private GameRestarter _gameRestarter;
-        
+
         private IRestartRegistryService _restartRegistryService;
 
         [Inject]
@@ -22,15 +23,15 @@ namespace MainGame.Scripts.GameLogic
 
         private void OnEnable()
         {
-            ShapeGrabber.FilledUp += ShowLooseScreen;
-            ShapeSpawner.CupEmptied += ShowWinScreen;
+            MatchShapeCleaner.FilledUp += ShowLooseScreen;
+            Cup.CupEmptied += ShowWinScreen;
             _restartRegistryService.Register(this);
         }
-        
+
         private void OnDisable()
         {
-            ShapeGrabber.FilledUp -= ShowLooseScreen;
-            ShapeSpawner.CupEmptied -= ShowWinScreen;
+            MatchShapeCleaner.FilledUp -= ShowLooseScreen;
+            Cup.CupEmptied -= ShowWinScreen;
             _restartRegistryService.UnRegister(this);
         }
 

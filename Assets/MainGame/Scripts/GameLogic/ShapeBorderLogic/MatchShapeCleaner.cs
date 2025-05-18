@@ -8,83 +8,54 @@ using Zenject;
 
 namespace MainGame.Scripts.GameLogic.ShapeBorderLogic
 {
-    public class ShapeGrabber : MonoBehaviour, IRestartable
+    public class MatchShapeCleaner : MonoBehaviour, IRestartable
     {
-        [SerializeField] private List<ShapeSpawnPoint> _spawnPoints;
         [SerializeField] private int _similarShapesToStreak = 3;
         [SerializeField] private Button _restartButton;
-        
-        private Dictionary<Shape, ShapeSpawnPoint> _allShapes;
+        [SerializeField] private ShapeHolderBar _shapeHolderBar;
+
         private List<Shape> _similarShapes;
+        private List<Shape> _allShapes;
         private IRestartRegistryService _restartRegistryService;
-        
+
         public static event Action FilledUp;
         public static event Action<Shape> ShapeRemoved;
-        
-        private int MaxCountOfShapes => _spawnPoints.Count;
 
         [Inject]
         private void Construct(IRestartRegistryService restartRegistryService)
         {
-            _allShapes = new Dictionary<Shape, ShapeSpawnPoint>();
             _similarShapes = new List<Shape>();
+            _allShapes = new List<Shape>();
             _restartRegistryService = restartRegistryService;
         }
 
         private void OnEnable()
         {
-            Shape.SentToBar += GetShape;
+            Shape.SentToBar += AddShape;
             _restartRegistryService.Register(this);
             _restartButton.onClick.AddListener(Restart);
         }
 
         private void OnDisable()
         {
-            Shape.SentToBar -= GetShape;
+            Shape.SentToBar -= AddShape;
             _restartRegistryService.UnRegister(this);
             _restartButton.onClick.RemoveListener(Restart);
         }
 
         public void Restart()
         {
-            foreach (var spawnPoint in _spawnPoints)
-            {
-                spawnPoint.UnReserve();
-            }
-            
             _allShapes.Clear();
             _similarShapes.Clear();
         }
 
-        private void GetShape(Shape shape)
-        {
-            AddShape(shape);
-        }
-
-        private bool CheckIsFull()
-        {
-            return _allShapes.Keys.Count >= MaxCountOfShapes;
-        }
-
         private void AddShape(Shape shape)
         {
-            foreach (ShapeSpawnPoint spawnPoint in _spawnPoints)
-            {
-                if (spawnPoint.IsReserved == true)
-                {
-                    continue;
-                }
-                
-                _allShapes[shape] = spawnPoint;;
-                shape.SetInBar(spawnPoint.Transform);
-                spawnPoint.Reserve();
-
-                break;
-            }
-            
+            _shapeHolderBar.SetShape(shape);
+            _allShapes.Add(shape);
             TryFindSimilarShapes(shape);
-            
-            if (CheckIsFull() == true)
+
+            if (_shapeHolderBar.IsFull == true)
             {
                 FilledUp?.Invoke();
             }
@@ -94,18 +65,18 @@ namespace MainGame.Scripts.GameLogic.ShapeBorderLogic
         {
             foreach (var shape in _allShapes)
             {
-                if (newShape.ShapeKey.GetHashCode() == shape.Key.ShapeKey.GetHashCode())
+                if (newShape.ShapeKey.GetHashCode() == shape.ShapeKey.GetHashCode())
                 {
-                    _similarShapes.Add(shape.Key);
+                    _similarShapes.Add(shape);
                 }
-                
+
                 if (_similarShapes.Count >= _similarShapesToStreak)
                 {
                     DeactivateSimilarShapes();
                     break;
                 }
             }
-            
+
             _similarShapes.Clear();
         }
 
@@ -113,7 +84,7 @@ namespace MainGame.Scripts.GameLogic.ShapeBorderLogic
         {
             foreach (var shape in _similarShapes)
             {
-                _allShapes[shape].UnReserve();
+                _shapeHolderBar.UnReservePlace(shape);
                 shape.Disappear();
                 _allShapes.Remove(shape);
                 ShapeRemoved?.Invoke(shape);

@@ -11,13 +11,10 @@ namespace MainGame.Scripts.Infrastructure.Services.Factories
 
         public ShapeResourcesLoader()
         {
-            _shapeResources =  new Dictionary<ShapeKey, ShapeResource>();
-            
+            _shapeResources = new Dictionary<ShapeKey, ShapeResource>();
+
             LoadResources();
         }
-
-        public Dictionary<ShapeKey, ShapeResource> ShapeResources => 
-            new Dictionary<ShapeKey, ShapeResource>(_shapeResources);
 
         public bool TryGetResources(ShapeKey key, out ShapeResource resources) =>
             _shapeResources.TryGetValue(key, out resources);
@@ -25,7 +22,7 @@ namespace MainGame.Scripts.Infrastructure.Services.Factories
         public ShapeKey GetRandomShapeKey()
         {
             List<ShapeKey> keys = _shapeResources.Keys.ToList();
-            int randomIndex = UnityEngine.Random.Range(0, keys.Count);
+            int randomIndex = Random.Range(0, keys.Count);
             return keys[randomIndex];
         }
 
@@ -33,23 +30,24 @@ namespace MainGame.Scripts.Infrastructure.Services.Factories
         {
             ShapeVariable[] shapeVariables = Resources.LoadAll<ShapeVariable>("ShapesVariable");
             Material[] colors = Resources.LoadAll<Material>("Colors");
-            Sprite[] animals =  Resources.LoadAll<Sprite>("ImageAnimals");
+            Sprite[] animals = Resources.LoadAll<Sprite>("ImageAnimals");
 
             foreach (var shapeVariable in shapeVariables)
             {
                 string shapeVariableName = shapeVariable.name;
-                
+
                 foreach (var color in colors)
                 {
                     string colorName = color.name;
-                    
+
                     foreach (var animal in animals)
                     {
                         string animalName = animal.name;
-                        
+
                         ShapeKey key = new ShapeKey(shapeVariableName, colorName, animalName);
-                        
-                        _shapeResources[key] = new ShapeResource(shapeVariable.Shape, shapeVariable.BorderImage, shapeVariable.FillImage, color, animal);
+
+                        _shapeResources[key] = new ShapeResource(shapeVariable.Shape, shapeVariable.BorderImage,
+                            shapeVariable.FillImage, color, animal);
                     }
                 }
             }

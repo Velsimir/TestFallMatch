@@ -1,7 +1,6 @@
-using MainGame.Scripts.GameLogic.ShapeLogic;
+using MainGame.Scripts.GameLogic;
 using MainGame.Scripts.Infrastructure.Services;
 using MainGame.Scripts.Infrastructure.Services.Factories;
-using MainGame.Scripts.Infrastructure.Services.ObjectSpawner;
 using MainGame.Scripts.Infrastructure.Services.SceneLoader;
 using MainGame.Scripts.Infrastructure.StateMachine;
 using UnityEngine;
@@ -22,6 +21,7 @@ namespace MainGame.Scripts.Infrastructure.Installers
             Container.Bind<IShapeResourceLoader>().To<ShapeResourcesLoader>().AsSingle();
             Container.Bind<IShapeFactory>().To<ShapeFactory>().AsSingle();
             Container.Bind<IRestartRegistryService>().To<RestartRegistryService>().AsSingle();
+            Container.Bind<ShapeSpawner>().To<ShapeSpawner>().AsSingle();
             
             Container.Bind<ICoroutineRunnerService>().FromComponentInNewPrefab(_coroutineRunnerServicePrefab).AsSingle();
             Container.Bind<Curtain>().FromComponentInNewPrefab(_curtain).AsSingle();

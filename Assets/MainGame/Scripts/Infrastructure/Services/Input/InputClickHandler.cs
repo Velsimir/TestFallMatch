@@ -7,16 +7,16 @@ namespace MainGame.Scripts.Infrastructure.Services
     public class InputClickHandler : IInputClickHandlerService, IDisposable
     {
         private readonly InputSystem _inputSystem;
-        
+
         public InputClickHandler()
         {
             _inputSystem = new InputSystem();
-            
+
             _inputSystem.Enable();
-            
+
             _inputSystem.Player.Attack.performed += HandleClick;
         }
-        
+
         public event Action<Vector2> ClickPressed;
 
         public void Dispose()

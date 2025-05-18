@@ -39,10 +39,10 @@ namespace MainGame.Scripts.Infrastructure.Services.SceneLoader
             {
                 yield return null;
             }
-            
+
             while (SceneManager.GetActiveScene().name != sceneName.ToString())
                 yield return null;
-            
+
             onLoaded?.Invoke();
         }
     }

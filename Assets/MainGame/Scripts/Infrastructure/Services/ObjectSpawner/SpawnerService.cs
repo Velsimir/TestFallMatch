@@ -4,12 +4,13 @@ using Object = UnityEngine.Object;
 
 namespace MainGame.Scripts.Infrastructure.Services.ObjectSpawner
 {
-     public class SpawnerService <TSpawnableObjet> : ISpawnerService <TSpawnableObjet> where TSpawnableObjet : MonoBehaviour, ISpawnable
+    public class SpawnerService<TSpawnableObjet> : ISpawnerService<TSpawnableObjet>
+        where TSpawnableObjet : MonoBehaviour, ISpawnable
     {
         private readonly TSpawnableObjet _spawnablePrefab;
         private readonly ObjectPoolService _poolService;
 
-        public SpawnerService(TSpawnableObjet spawnablePrefab) 
+        public SpawnerService(TSpawnableObjet spawnablePrefab)
         {
             _spawnablePrefab = spawnablePrefab;
             _poolService = new ObjectPoolService();
@@ -28,12 +29,12 @@ namespace MainGame.Scripts.Infrastructure.Services.ObjectSpawner
                 spawnableObjet = Object.Instantiate(_spawnablePrefab);
                 _poolService.Track(spawnableObjet);
             }
-            
+
             spawnableObjet.gameObject.SetActive(true);
-            
+
             return spawnableObjet;
         }
-        
+
         public TSpawnableObjet Spawn(Transform at)
         {
             TSpawnableObjet spawnableObjet;
@@ -47,17 +48,17 @@ namespace MainGame.Scripts.Infrastructure.Services.ObjectSpawner
                 spawnableObjet = Object.Instantiate(_spawnablePrefab, at);
                 _poolService.Track(spawnableObjet);
             }
-            
+
             spawnableObjet.transform.position = at.position;
             spawnableObjet.gameObject.SetActive(true);
-            
+
             return spawnableObjet;
         }
 
         private class ObjectPoolService
         {
             private readonly List<TSpawnableObjet> _pool = new List<TSpawnableObjet>();
-            
+
             public bool HasFree => _pool.Count > 0;
 
             public TSpawnableObjet Get()

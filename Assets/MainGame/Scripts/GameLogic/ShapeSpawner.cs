@@ -1,137 +1,54 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MainGame.Scripts.GameLogic.ShapeBorderLogic;
 using MainGame.Scripts.GameLogic.ShapeLogic;
 using MainGame.Scripts.Infrastructure.Extensions;
 using MainGame.Scripts.Infrastructure.Services;
 using UnityEngine;
-using Zenject;
 using MainGame.Scripts.Infrastructure.Services.Factories;
-using UnityEngine.UI;
+using MainGame.Scripts.Infrastructure.Services.ObjectSpawner;
 
 namespace MainGame.Scripts.GameLogic
 {
-    public class ShapeSpawner : MonoBehaviour, IRestartable
+    public class ShapeSpawner
     {
-        [SerializeField] private Transform _transform;
-        [SerializeField] private int _countOfVariableShapes;
-        [SerializeField] private int _countOfCopiesShapes = 3;
-        [SerializeField] private float _timeBetweenSpawn;
-        [SerializeField] private Button _reserveButton;
-        
-        private IShapeFactory _shapeFactory;
-        private IShapeResourceLoader _shapeResourceLoader;
-        private List<ShapeKey> _shapeKeys;
-        private List<Shape> _currentShapes;
+        private readonly ICoroutineRunnerService _coroutineRunner;
+        private readonly IShapeFactory _shapeFactory;
         private WaitForSeconds _waitBetweenSpawn;
         private Coroutine _coroutineSpawn;
-        private IRestartRegistryService _restartRegistryService;
-
-        public static event Action CupEmptied;
         
-        [Inject]
-        private void Construct(IShapeFactory shapeFactory, IShapeResourceLoader shapeResourceLoader, IInputClickHandlerService inputClickHandlerService, IRestartRegistryService restartRegistryService)
+        public event Action<ISpawnable> Spawned;
+
+        private ShapeSpawner(IShapeFactory shapeFactory, ICoroutineRunnerService coroutineRunner)
         {
             _shapeFactory = shapeFactory;
-            _shapeResourceLoader = shapeResourceLoader;
-            
-            _transform = transform;
-            _shapeKeys = new List<ShapeKey>();
-            _currentShapes = new List<Shape>();
-            _waitBetweenSpawn = new WaitForSeconds(_timeBetweenSpawn);
-            _restartRegistryService =  restartRegistryService;
+            _coroutineRunner =  coroutineRunner;
         }
 
-        private void OnEnable()
+        public void StartSpawn(List<ShapeKey> shapeKeys, Transform spawnPoint, float timeBetweenSpawn)
         {
-            ShapeGrabber.ShapeRemoved += RemoveShape;
-            _reserveButton.onClick.AddListener(RespawnShapes);
-            _restartRegistryService.Register(this);
-            Debug.Log("_restartRegistryService.Register(this)");
-        }
-        
-        private void OnDisable()
-        {
-            ShapeGrabber.ShapeRemoved -= RemoveShape;
-            _reserveButton.onClick.RemoveListener(RespawnShapes);
-            _restartRegistryService.UnRegister(this);
-        }
+            _waitBetweenSpawn = new WaitForSeconds(timeBetweenSpawn);
 
-        public void Restart()
-        {
-            foreach (var shape in _currentShapes)
-            {
-                shape.Disappear();
-            }
-            
-            _shapeKeys.Clear();
-            _currentShapes.Clear();
-            
-            FillShapeKeys();
-            
-            StartSpawn();
-        }
-
-        private void RespawnShapes()
-        {
-            //TODO доделать респавн фигурок, если заспавнились не все
-            foreach (var shape in _currentShapes)
-            {
-                shape.Disappear();
-            }
-            
-            _currentShapes.Clear();
-            
-            StartSpawn();
-        }
-
-        private void StartSpawn()
-        {
             if (_coroutineSpawn != null)
             {
-                StopCoroutine(_coroutineSpawn);
+                _coroutineRunner.StopCoroutine(ref _coroutineSpawn);
                 _coroutineSpawn = null;
             }
-            
-            _coroutineSpawn = StartCoroutine(Spawn());
+
+            _coroutineSpawn = _coroutineRunner.StartCoroutine(Spawn(shapeKeys, spawnPoint));
         }
 
-        private IEnumerator Spawn()
+        private IEnumerator Spawn(List<ShapeKey> shapeKeys, Transform spawnPoint)
         {
-            _shapeKeys.Shuffle();
-
-            foreach (var shapeKey in _shapeKeys)
+            shapeKeys.Shuffle();
+            
+            foreach (var shapeKey in shapeKeys)
             {
-                Shape shape = _shapeFactory.Spawn(shapeKey, _transform);
+                ISpawnable shape = _shapeFactory.Spawn(shapeKey, spawnPoint);
                 
-                _currentShapes.Add(shape);
+                Spawned?.Invoke(shape);
                 
                 yield return _waitBetweenSpawn;
-            }
-        }
-
-        private void FillShapeKeys()
-        {
-            for (int i = 0; i < _countOfVariableShapes; i++)
-            {
-                ShapeKey shapeKey = _shapeResourceLoader.GetRandomShapeKey();
-
-                for (int j = 0; j < _countOfCopiesShapes; j++)
-                {
-                    _shapeKeys.Add(shapeKey);
-                }
-            }
-        }
-
-        private void RemoveShape(Shape shape)
-        {
-            _currentShapes.Remove(shape);
-            _shapeKeys.Remove(shape.ShapeKey);
-
-            if (_currentShapes.Count <= 0)
-            {
-                CupEmptied?.Invoke();
             }
         }
     }

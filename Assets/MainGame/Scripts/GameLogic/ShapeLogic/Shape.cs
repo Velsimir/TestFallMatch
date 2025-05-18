@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MainGame.Scripts.GameLogic.ShapeLogic
 {
-    [RequireComponent(typeof(SpriteRenderer), 
+    [RequireComponent(typeof(SpriteRenderer),
         typeof(Rigidbody2D))]
     public class Shape : MonoBehaviour, ISpawnable
     {
@@ -13,9 +13,9 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
         [SerializeField] private SpriteRenderer _animalSprite;
         [SerializeField] private SpriteRenderer _colorMaterial;
         [SerializeField] private Rigidbody2D _rigidbody2D;
-        
+
         private Quaternion _defaultRotation;
-        
+
         public event Action<ISpawnable> Disappeared;
         public static event Action<Shape> SentToBar;
 
@@ -29,13 +29,13 @@ namespace MainGame.Scripts.GameLogic.ShapeLogic
         public void Initialize(Sprite animalImage, Material colorMaterial, ShapeKey shapeKey)
         {
             _rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
-            
+
             _animalSprite.sprite = animalImage;
             _colorMaterial.color = colorMaterial.color;
             _fillSprite.color = colorMaterial.color;
 
-            transform.rotation =  _defaultRotation;
-            
+            transform.rotation = _defaultRotation;
+
             ShapeKey = shapeKey;
         }
 
